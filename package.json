@@ -1,6 +1,6 @@
 {
     "name": "typed-remote-procedure-call",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "license": "MIT",
     "author": "Sergey Shpadyrev",
     "keywords": [],
@@ -13,7 +13,7 @@
         "build": "tsc",
         "test": "jest"
     },
-    "description": "Library for creating typed RPC callers and handlers",
+    "description": "Library for creating typed RPC senders and receivers",
     "devDependencies": {
         "@types/jest": "^29.5.12",
         "@types/node": "^22.5.2",
