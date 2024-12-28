@@ -1,0 +1,27 @@
+{
+    "name": "typed-remote-procedure-call",
+    "version": "0.0.1",
+    "license": "MIT",
+    "author": "Sergey Shpadyrev",
+    "keywords": [],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/sergeyshpadyrev/typed-remote-procedure-call"
+    },
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc",
+        "test": "jest"
+    },
+    "description": "Library for creating typed RPC callers and handlers",
+    "devDependencies": {
+        "@types/jest": "^29.5.12",
+        "@types/node": "^22.5.2",
+        "jest": "^29.7.0",
+        "jest-environment-jsdom": "^29.7.0",
+        "ts-jest": "^29.2.5",
+        "ts-node": "^10.9.2",
+        "tslib": "^2.7.0",
+        "typescript": "^5.5.4"
+    }
+}

@@ -1,0 +1,4 @@
+.prettierrc
+jest.config.ts
+src/
+test/
