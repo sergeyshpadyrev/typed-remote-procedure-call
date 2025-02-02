@@ -11,10 +11,7 @@ import {
 
 const referProxyHandler = (path: string) => ({
     get(_: any, prop: string) {
-        return {
-            __path: () => `${path}.${prop}`,
-            ...new Proxy({}, referProxyHandler(`${path}.${prop}`)),
-        };
+        return new Proxy({ __path: () => `${path}.${prop}` }, referProxyHandler(`${path}.${prop}`));
     },
     apply(_: any, __: any, _args: any[]) {
         return path;
