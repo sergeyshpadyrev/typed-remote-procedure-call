@@ -22,10 +22,21 @@ const referProxyHandler = (path: string) => ({
 });
 
 const refer = <Output>(prefix: string): OperationTemplateReferer<Output> => {
-    return {
-        __path: () => prefix,
-        ...new Proxy({}, referProxyHandler(prefix)),
-    } as OperationTemplateReferer<Output>;
+    return new Proxy(
+        { __path: () => prefix },
+        {
+            get(_target, prop: string) {
+                if (typeof prop === 'string') {
+                    const path = prefix ? `${prefix}.${prop}` : prop;
+                    console.log(path);
+                    return {
+                        __path: () => path,
+                        ...new Proxy({}, referProxyHandler(path)),
+                    };
+                }
+            },
+        },
+    ) as OperationTemplateReferer<Output>;
 };
 
 const createTemplate = <API extends OperationAPI, Input, Output>(
@@ -35,7 +46,6 @@ const createTemplate = <API extends OperationAPI, Input, Output>(
         composition: (output: OperationTemplateReferer<Output>) => OperationTemplate<API, Input, T>,
     ): OperationTemplate<API, Input, T> => {
         const ref = refer<Output>(`\$${config.length - 1}`);
-        console.log(ref.__path());
         const concatingConfig = composition(ref).toConfig();
         return createTemplate<API, Input, T>([...config, ...concatingConfig]);
     },

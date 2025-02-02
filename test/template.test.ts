@@ -10,7 +10,9 @@ describe('template engine', () => {
     });
 
     it('should compose template', async () => {
-        const composed = templateEngine.add({ a: 1, b: 2 }).then((sum) => templateEngine.addOne(sum.__path()));
+        const composed = templateEngine
+            .add({ a: 1, b: 2 })
+            .then((result) => templateEngine.addOne(result.sum.__path()));
         const request = composed.toRequest();
 
         expect(request).toEqual({
