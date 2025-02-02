@@ -1,15 +1,13 @@
-import { createExecutor } from '../src';
+import { createExecutor, createTemplateEngine } from '../src';
 
 export type TestInterface = {
     add: (input: { a: number; b: number }) => Promise<number>;
-    subtract: (input: { a: number; b: number }) => Promise<number>;
-    multiply: (input: { a: number; b: number }) => Promise<number>;
-    divide: (input: { a: number; b: number }) => Promise<number>;
+    addOne: (input: number) => Promise<number>;
 };
 
 export const executor = createExecutor<TestInterface>({
     add: async (input) => input.a + input.b,
-    subtract: async (input) => input.a - input.b,
-    multiply: async (input) => input.a * input.b,
-    divide: async (input) => input.a / input.b,
+    addOne: async (input) => input + 1,
 });
+
+export const templateEngine = createTemplateEngine<TestInterface>();

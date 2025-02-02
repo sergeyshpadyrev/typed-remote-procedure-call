@@ -8,8 +8,30 @@ export interface OperationAPI {
 }
 
 export interface OperationTemplate<API extends OperationAPI, Input, Output> {
-    compose<T>(template: OperationTemplate<API, Output, T>): OperationTemplate<API, Input, T>;
+    then: <T>(
+        composition: (output: OperationTemplateRefObject<Output>) => OperationTemplate<API, Input, T>,
+    ) => OperationTemplate<API, Input, T>;
+    toConfig: () => OperationTemplateConfig<API>;
+    toRequest: () => ExecutionRequest;
 }
+export type OperationTemplateEngine<API extends OperationAPI> = {
+    [K in keyof API]: (
+        input: OperationTemplateInput<Parameters<API[K]>[0]>,
+    ) => OperationTemplate<API, Parameters<API[K]>[0], Awaited<ReturnType<API[K]>>>;
+};
+
+export type OperationTemplateRef<T> = string | T;
+export type OperationTemplateInput<T> = T extends object
+    ? {
+          [K in keyof T]: T[K] extends object ? OperationTemplateInput<T[K]> : T[K] | OperationTemplateRef<T[K]>;
+      }
+    : T | OperationTemplateRef<T>;
+
+export type OperationTemplateRefObject<T> = T extends object
+    ? {
+          [K in keyof T]: T[K] extends object ? OperationTemplateRefObject<T[K]> : OperationTemplateRef<T[K]>;
+      }
+    : OperationTemplateRef<T>;
 
 export type OperationTemplateConfig<API extends OperationAPI> = OperationTemplateConfigLine<API>[];
 export type OperationTemplateConfigLine<API extends OperationAPI> = {
@@ -17,12 +39,6 @@ export type OperationTemplateConfigLine<API extends OperationAPI> = {
     input: OperationTemplateConfigRef | any;
 };
 export type OperationTemplateConfigRef = { type: '$ref'; value: string };
-
-// export type OperationState<OperationAPI, Input, Output> = {
-//     input: Input;
-//     name: keyof OperationAPI;
-//     output: Output;
-// };
 
 // -------------------------------
 // OPERATIONS TYPES (END)
