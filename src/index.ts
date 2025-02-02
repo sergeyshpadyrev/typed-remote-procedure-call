@@ -6,48 +6,36 @@ import {
     OperationTemplateConfig,
     OperationTemplate,
     OperationTemplateEngine,
-    OperationTemplateRefObject,
+    OperationTemplateReferer,
 } from './types';
 
 const referProxyHandler = (path: string) => ({
     get(_: any, prop: string) {
-        return new Proxy({}, referProxyHandler(`${path}.${prop}`));
+        return {
+            __path: () => `${path}.${prop}`,
+            ...new Proxy({}, referProxyHandler(`${path}.${prop}`)),
+        };
     },
     apply(_: any, __: any, _args: any[]) {
         return path;
     },
-    getPrototypeOf() {
-        return Object.prototype;
-    },
 });
 
-const refer = <Output>(prefix: string): OperationTemplateRefObject<Output> => {
-    console.log(typeof ({} as Output));
-    if (typeof ({} as Output) !== 'object' || ({} as Output) === null) {
-        return prefix as OperationTemplateRefObject<Output>;
-    }
-    return new Proxy(
-        {},
-        {
-            get(_target, prop: string) {
-                if (typeof prop === 'string') {
-                    console.log(prefix, prop);
-                    const path = prefix ? `${prefix}.${prop}` : prop;
-                    return new Proxy({}, referProxyHandler(path));
-                }
-            },
-        },
-    ) as OperationTemplateRefObject<Output>;
+const refer = <Output>(prefix: string): OperationTemplateReferer<Output> => {
+    return {
+        __path: () => prefix,
+        ...new Proxy({}, referProxyHandler(prefix)),
+    } as OperationTemplateReferer<Output>;
 };
 
 const createTemplate = <API extends OperationAPI, Input, Output>(
     config: OperationTemplateConfig<API>,
 ): OperationTemplate<API, Input, Output> => ({
     then: <T>(
-        composition: (outputs: OperationTemplateRefObject<Output>) => OperationTemplate<API, Input, T>,
+        composition: (output: OperationTemplateReferer<Output>) => OperationTemplate<API, Input, T>,
     ): OperationTemplate<API, Input, T> => {
         const ref = refer<Output>(`\$${config.length - 1}`);
-
+        console.log(ref.__path());
         const concatingConfig = composition(ref).toConfig();
         return createTemplate<API, Input, T>([...config, ...concatingConfig]);
     },

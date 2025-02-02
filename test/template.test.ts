@@ -9,16 +9,15 @@ describe('template engine', () => {
         expect(request).toEqual({ template: [{ name: 'add', input: { a: 1, b: 2 } }] });
     });
 
-    // it('should compose template', async () => {
-    //     const composed = templateEngine.add({ a: 1, b: 2 }).then((sum) => templateEngine.addOne(sum));
-    //     console.log(composed.toConfig());
-    //     const request = composed.toRequest();
+    it('should compose template', async () => {
+        const composed = templateEngine.add({ a: 1, b: 2 }).then((sum) => templateEngine.addOne(sum.__path()));
+        const request = composed.toRequest();
 
-    //     expect(request).toEqual({
-    //         template: [
-    //             { name: 'add', input: { a: 1, b: 2 } },
-    //             { name: 'addOne', input: { type: '$ref', value: '$0' } },
-    //         ],
-    //     });
-    // });
+        expect(request).toEqual({
+            template: [
+                { name: 'add', input: { a: 1, b: 2 } },
+                { name: 'addOne', input: { type: '$ref', value: '$0' } },
+            ],
+        });
+    });
 });
