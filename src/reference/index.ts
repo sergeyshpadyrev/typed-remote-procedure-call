@@ -2,13 +2,14 @@ import { ReferenceExtractor } from './types';
 
 export const reference = <T>(path: string = '$'): ReferenceExtractor<T> =>
     new Proxy(
-        { _path: path },
+        {},
         {
             get(target, prop) {
-                if (typeof prop === 'string') {
-                    const newPath = `${path}.${prop}`;
-                    return reference(newPath);
-                }
+                if (typeof prop !== 'string') throw new Error("Can't access proxy value");
+                if (prop === '_path') return path;
+
+                const newPath = `${path}.${prop}`;
+                return reference(newPath);
             },
         },
     ) as ReferenceExtractor<T>;
