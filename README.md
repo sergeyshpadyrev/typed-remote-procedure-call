@@ -23,28 +23,25 @@ yarn add typed-remote-procedure-call
 ## Usage
 
 ```ts
-import { createRpcSender, createRpcReceiver } from 'typed-remote-procedure-call';
+import { createCaller, createExecutor, ExecutionRequest, ExecutionResponse } from 'typed-remote-procedure-call';
 
 type Methods = {
-    createUser: (name: string) => Promise<{ id: string; name: string }>;
-    sum: (a: number, b: number) => Promise<number>;
+    add: (input: { a: number; b: number }) => Promise<number>;
+    createUser: (input: { name: string }) => Promise<{ id: string; name: string }>;
 };
 
-// Receiver-side
-const receiver = createRpcReceiver<Methods>({
-    implementation: {
-        createUser: async (name: string) => ({ id: '1', name }),
-        sum: async (a: number, b: number) => a + b,
-    },
+// Execution side (e.g. server)
+const executor = createExecutor<Methods>({
+    add: async (input: { a: number; b: number }) => input.a + input.b,
+    createUser: async (input: { name: string }) => ({ id: '1', name: input.name }),
 });
-const handleRequestFromSenderSide = async (request: JsonRpcRequest): Promise<JsonRpcResponse> =>
-    receiver.receive(request);
+const handleRequestFromCallerSide = async (request: ExecutionRequest): Promise<ExecutionResponse> =>
+    executor.execute(request);
 
-// Sender-side
-const sender = createRpcSender<Methods>({
-    // Here you can use any transport
-    send: async (request: JsonRpcRequest) => sendRequestToReceiverSide(request),
+// Caller side (e.x. client)
+const caller = createCaller<Methods>({
+    handle: async (request: ExecutionRequest) => sendRequestToExecutionSide(request), // Here you can use any transport
 });
-const user = await sender.createUser('John');
+const user = await caller.createUser('John');
 const sum = await sender.sum(1, 2);
 ```
