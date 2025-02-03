@@ -1,5 +1,7 @@
+import { OperationTemplateJSON } from '../template';
+
 export type ExecutionRequest = {
-    data: any;
+    data: OperationTemplateJSON<any>;
 };
 
 export type ExecutionResponse = {

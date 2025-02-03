@@ -1,6 +1,6 @@
-import { createExecutor } from '.';
+import { createExecutor, ExecutionRequest } from '.';
 import { describe, it, expect } from '@jest/globals';
-import { ExecutionRequest } from './types';
+import { OperationTemplateJSON } from '../template';
 
 export type TestInterface = {
     add: (input: { a: number; b: number }) => Promise<number>;
@@ -14,7 +14,7 @@ export const executor = createExecutor<TestInterface>({
 
 describe('executor', () => {
     it('should execute one operation', async () => {
-        const data = [{ name: 'add', input: { a: 1, b: 2 } }];
+        const data = [{ name: 'add', input: { a: 1, b: 2 } }] as OperationTemplateJSON<TestInterface>;
         const request = { data } as ExecutionRequest;
         const response = await executor.execute(request);
         expect(response.data).toEqual([3]);
@@ -24,7 +24,7 @@ describe('executor', () => {
         const data = [
             { name: 'add', input: { a: 1, b: 2 } },
             { name: 'add', input: { a: { type: '$ref', value: '$0' }, b: 3 } },
-        ];
+        ] as OperationTemplateJSON<TestInterface>;
         const request = { data } as ExecutionRequest;
         const response = await executor.execute(request);
         expect(response.data).toEqual([3, 6]);

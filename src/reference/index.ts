@@ -13,3 +13,5 @@ export const reference = <T>(path: string = '$'): ReferenceExtractor<T> =>
             },
         },
     ) as ReferenceExtractor<T>;
+
+export type * from './types';

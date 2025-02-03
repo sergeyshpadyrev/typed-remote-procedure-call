@@ -1,5 +1,5 @@
 import { ExecutionRequest, ExecutionResponse, Executor } from './types';
-import { OperationAPI } from '../types';
+import { OperationAPI } from '../operation';
 
 export const createExecutor = <API extends OperationAPI>(operations: API): Executor => ({
     execute: async (request: ExecutionRequest): Promise<ExecutionResponse> => {
@@ -31,3 +31,5 @@ export const createExecutor = <API extends OperationAPI>(operations: API): Execu
         }
     },
 });
+
+export type * from './types';
