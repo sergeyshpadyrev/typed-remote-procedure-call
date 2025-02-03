@@ -19,21 +19,21 @@ const referProxyHandler = (path: string) => ({
 });
 
 const refer = <Output>(prefix: string): OperationTemplateReferer<Output> => {
-    return new Proxy(
-        { __path: () => prefix },
-        {
-            get(_target, prop: string) {
-                if (typeof prop === 'string') {
-                    const path = prefix ? `${prefix}.${prop}` : prop;
-                    console.log(path);
-                    return {
-                        __path: () => path,
-                        ...new Proxy({}, referProxyHandler(path)),
-                    };
-                }
+    return {
+        __path: () => prefix,
+        ...new Proxy(
+            {},
+            {
+                get(_target, prop: string) {
+                    console.log(prop);
+                    if (typeof prop === 'string') {
+                        const path = prefix ? `${prefix}.${prop}` : prop;
+                        return { __path: () => path, ...new Proxy({}, referProxyHandler(path)) };
+                    }
+                },
             },
-        },
-    ) as OperationTemplateReferer<Output>;
+        ),
+    } as OperationTemplateReferer<Output>;
 };
 
 const createTemplate = <API extends OperationAPI, Input, Output>(
@@ -61,36 +61,5 @@ export const createTemplateEngine = <API extends OperationAPI>() =>
             },
         },
     ) as OperationTemplateEngine<API>;
-
-export const createExecutor = <API extends OperationAPI>(operations: API): Executor => ({
-    execute: async (request: ExecutionRequest): Promise<ExecutionResponse> => {
-        try {
-            const results: any[] = [];
-
-            const derefer = (input: any): any => {
-                if (typeof input !== 'object' || input === null) return input;
-                if (input.type !== '$ref')
-                    return Object.assign({}, ...Object.keys(input).map((key) => ({ [key]: derefer(input[key]) })));
-
-                const fullPath = input.value.replace('$', '').split('.');
-                const index = parseInt(fullPath[0]);
-                const path = fullPath.slice(1).join('.');
-
-                const result = results[index];
-                return path.length > 0 ? result[path] : result;
-            };
-
-            for (const line of request.template) {
-                const input = derefer(line.input);
-                const result = await operations[line.name as string](input);
-                results.push(result);
-            }
-
-            return { data: results };
-        } catch (error: any) {
-            return { error: error.message };
-        }
-    },
-});
 
 export type * from './types';
