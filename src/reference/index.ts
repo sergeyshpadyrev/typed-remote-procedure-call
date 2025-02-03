@@ -1,6 +1,6 @@
 import { ReferenceExtractor } from './types';
 
-export const reference = <T>(path: string = '$'): ReferenceExtractor<T> =>
+export const reference = <T>(path: string): ReferenceExtractor<T> =>
     new Proxy(
         {},
         {

@@ -1,4 +1,4 @@
-type Primitive = string | number | boolean | bigint | null | undefined;
+export type Primitive = string | number | boolean | bigint | null | undefined;
 
 export type Reference<T, P extends string = ''> = { _path: P; _type: T };
 

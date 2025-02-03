@@ -1,6 +1,6 @@
 import { createExecutor, ExecutionRequest } from '.';
 import { describe, it, expect } from '@jest/globals';
-import { OperationTemplateJSON } from '../template';
+import { OperationTemplateJSON, templateReferencePrefix } from '../template';
 
 export type TestInterface = {
     add: (input: { a: number; b: number }) => Promise<number>;
@@ -21,7 +21,7 @@ describe('executor', () => {
     it('should execute two operations', async () => {
         const data = [
             { name: 'add', input: { a: 1, b: 2 } },
-            { name: 'add', input: { a: { type: '$ref', value: '$0' }, b: 3 } },
+            { name: 'add', input: { a: `${templateReferencePrefix}0`, b: 3 } },
         ] as OperationTemplateJSON<TestInterface>;
         const request = { data } as ExecutionRequest;
         const response = await executor.execute(request);

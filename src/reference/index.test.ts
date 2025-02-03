@@ -12,15 +12,15 @@ type ExamplePrimitive = number;
 
 describe('reference', () => {
     it('should wrap object type', async () => {
-        const ref = reference<ExampleObject>();
-        expect(ref._path).toEqual('$');
-        expect(ref.a._path).toEqual('$.a');
-        expect(ref.b._path).toEqual('$.b');
-        expect(ref.b.c._path).toEqual('$.b.c');
-        expect(ref.b.d._path).toEqual('$.b.d');
+        const ref = reference<ExampleObject>('$0');
+        expect(ref._path).toEqual('$0');
+        expect(ref.a._path).toEqual('$0.a');
+        expect(ref.b._path).toEqual('$0.b');
+        expect(ref.b.c._path).toEqual('$0.b.c');
+        expect(ref.b.d._path).toEqual('$0.b.d');
     });
     it('should wrap primitive type', async () => {
-        const ref = reference<ExamplePrimitive>();
-        expect(ref._path).toEqual('$');
+        const ref = reference<ExamplePrimitive>('$0');
+        expect(ref._path).toEqual('$0');
     });
 });
