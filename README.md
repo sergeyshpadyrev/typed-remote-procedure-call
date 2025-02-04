@@ -34,7 +34,7 @@ First you need to declare your operations API
 ```ts
 type Methods = {
     add: (input: { a: number; b: number }) => Promise<number>;
-    createUser: (input: { name: string }) => Promise<{ id: string; name: string }>;
+    createUser: (input: { name: string }) => Promise<{ age: number; name: string }>;
 };
 ```
 
@@ -47,7 +47,7 @@ import { createExecutor, ExecutionRequest, ExecutionResponse } from 'typed-remot
 
 const executor = createExecutor<Methods>({
     add: async (input: { a: number; b: number }) => input.a + input.b,
-    createUser: async (input: { name: string }) => ({ id: '1', name: input.name }),
+    createUser: async (input: { name: string }) => ({ age: 20, name: input.name }),
 });
 export const handleRequestFromCallerSide = async (request: ExecutionRequest): Promise<ExecutionResponse> =>
     executor.execute(request);
