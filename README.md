@@ -14,7 +14,7 @@ It can be used for:
 
 ## Installation
 
-```bash
+```sh
 npm install --save typed-remote-procedure-call
 # or
 yarn add typed-remote-procedure-call
