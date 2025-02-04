@@ -1,4 +1,4 @@
-import { createExecutor, createTemplateEngine, ExecutionRequest } from '.';
+import { createRPC, createExecutor, ExecutionRequest } from '.';
 import { describe, it } from '@jest/globals';
 
 export type TestInterface = {
@@ -14,24 +14,13 @@ export const executor = createExecutor<TestInterface>({
     }),
 });
 
-const operations = createTemplateEngine<TestInterface>();
+const rpc = createRPC<TestInterface>({
+    process: async (request: ExecutionRequest) => executor.execute(request),
+});
 
 describe('Library', () => {
-    it('should be able to create and execute one operation', async () => {
-        const template = operations.add({ a: 1, b: 2 });
-        const data = template.toJSON();
-        const request = { data } as ExecutionRequest;
-        const response = await executor.execute(request);
-        expect(response.data).toEqual([3]);
-    });
-
-    it('should be able to create and execute two composed operations', async () => {
-        const template = operations
-            .createUser({ firstName: 'John', lastName: 'Smith' })
-            .compose((user) => operations.add({ a: user.age, b: 2 }));
-        const data = template.toJSON();
-        const request = { data } as ExecutionRequest;
-        const response = await executor.execute(request);
-        expect(response.data).toEqual([{ age: 20, fullName: 'John Smith' }, 22]);
+    it('should be able to call operations one by one', async () => {
+        const sum = await rpc.call.add({ a: 1, b: 2 });
+        expect(sum).toEqual(3);
     });
 });

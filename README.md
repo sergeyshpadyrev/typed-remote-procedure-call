@@ -3,7 +3,7 @@
 
 # typed-remote-procedure-call
 
-This library provides a convenient way to create transport-agnostic typed RPC senders and receivers. <br/>
+This library provides a convenient way to create transport-agnostic typed RPC. <br/>
 It's based on JSON RPC protocol.
 
 It can be used for:
@@ -52,18 +52,18 @@ export const handleRequestFromCallerSide = async (request: ExecutionRequest): Pr
     executor.execute(request);
 ```
 
-### Caller
+### RPC
 
 Just to call operations one by one you can use a simple caller:
 
 ```ts
-import { createCaller, ExecutionRequest, ExecutionResponse } from 'typed-remote-procedure-call';
+import { createRPC, ExecutionRequest, ExecutionResponse } from 'typed-remote-procedure-call';
 
-const caller = createCaller<Methods>({
-    handle: async (request: ExecutionRequest) => sendRequestToExecutionSide(request), // Here you can use any transport
+const rpc = createRPC<Methods>({
+    process: async (request: ExecutionRequest) => sendRequestToExecutionSide(request), // Here you can use any transport
 });
-const user = await caller.createUser('John');
-const sum = await sender.sum(1, 2);
+const user = await rpc.createUser('John');
+const sum = await rpc.sum(1, 2);
 ```
 
 ### Chain

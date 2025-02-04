@@ -3,9 +3,9 @@ import { OperationAPI } from '../operation';
 import { createTemplateEngine } from '../template';
 import { OperationCallerProps } from './types';
 
-export const createCaller = <API extends OperationAPI>(props: OperationCallerProps) => {
+export const createRPC = <API extends OperationAPI>(props: OperationCallerProps) => {
     const operations = createTemplateEngine<API>();
-    return new Proxy(
+    const call = new Proxy(
         {},
         {
             get: (_target, prop) => {
@@ -14,7 +14,7 @@ export const createCaller = <API extends OperationAPI>(props: OperationCallerPro
                         try {
                             const template = operations[prop](input);
                             const request: ExecutionRequest = { data: template.toJSON() };
-                            const response = await props.handle(request);
+                            const response = await props.process(request);
 
                             if (response.error) throw new Error(response.error);
                             return response.data![response.data!.length - 1];
@@ -26,4 +26,7 @@ export const createCaller = <API extends OperationAPI>(props: OperationCallerPro
             },
         },
     ) as API;
+    return {
+        call,
+    };
 };

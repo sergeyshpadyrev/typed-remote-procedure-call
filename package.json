@@ -13,7 +13,7 @@
         "build": "tsc",
         "test": "jest"
     },
-    "description": "Library for creating typed RPC senders and receivers",
+    "description": "Library for typed RPC",
     "devDependencies": {
         "@types/jest": "^29.5.12",
         "@types/node": "^22.5.2",
