@@ -2,21 +2,19 @@ import { OperationAPI } from '../operation';
 import { OperationTemplate, templateReferencePrefix } from '../template';
 import { reference, Reference, ReferenceExtractor } from '../reference';
 
-export const chain = <API extends OperationAPI, LastOutput>(
+export const chain = <API extends OperationAPI, LastOutput, FirstInput = unknown>(
     chainer: (
         next: <I, O>(template: OperationTemplate<any, I, O>) => ReferenceExtractor<O>,
     ) => Reference<LastOutput, any>,
-): OperationTemplate<API, any, LastOutput> | undefined => {
-    const templates: OperationTemplate<any, any, any>[] = [];
+): OperationTemplate<API, FirstInput, LastOutput> | undefined => {
+    const templates: OperationTemplate<API, any, any>[] = [];
     let referenceIndex = -1;
 
-    chainer(<I, O>(template: OperationTemplate<any, I, O>) => {
+    chainer((template) => {
         templates.push(template);
         return reference(`${templateReferencePrefix}${++referenceIndex}`);
     });
 
-    return templates.reduce(
-        (acc, template) => (acc ? acc.compose((_) => template) : template),
-        undefined as OperationTemplate<API, any, any> | undefined,
-    );
+    if (templates.length === 0) throw new Error('You cannot use chain without any templates');
+    return templates.slice(1).reduce((acc, template) => acc.compose((_) => template), templates[0]);
 };
