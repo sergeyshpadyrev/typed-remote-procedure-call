@@ -3,14 +3,15 @@
 
 # typed-remote-procedure-call
 
-This library provides a convenient way to create transport-agnostic typed RPC. <br/>
-It's based on JSON RPC protocol.
+This library provides a convenient way to create transport-agnostic typed RPC <br/>
 
 It can be used for:
 
 -   Client-server communication
 -   Iframe-host communication
 -   Host-iframe communication
+-   Websocket communication
+-   Any other channel
 
 ## Installation
 
