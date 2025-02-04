@@ -1,6 +1,8 @@
 ![workflow](https://github.com/sergeyshpadyrev/typed-remote-procedure-call/actions/workflows/main.yml/badge.svg)
 [![npm version](https://badge.fury.io/js/typed-remote-procedure-call.svg)](https://badge.fury.io/js/typed-remote-procedure-call)
 
+**If you like this project, please support it with a star on Github** 🌟
+
 # typed-remote-procedure-call
 
 This library provides a convenient way to create transport-agnostic typed RPC <br/>
