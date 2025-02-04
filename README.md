@@ -30,7 +30,7 @@ type Operation = <Input, Output>(input: Input) => Promise<Output>;
 
 First you need to create your operations API:
 
-```
+```ts
 type Methods = {
     add: (input: { a: number; b: number }) => Promise<number>;
     createUser: (input: { name: string }) => Promise<{ id: string; name: string }>;
