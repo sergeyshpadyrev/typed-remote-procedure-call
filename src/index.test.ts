@@ -20,7 +20,10 @@ const rpc = createRPC<TestInterface>({
 
 describe('Library', () => {
     it('should be able to call operations one by one', async () => {
-        const sum = await rpc.call.add({ a: 1, b: 2 });
-        expect(sum).toEqual(3);
+        const user = await rpc.call.createUser({ firstName: 'John', lastName: 'Doe' });
+        expect(user).toEqual({ age: 20, fullName: 'John Doe' });
+
+        const sum = await rpc.call.add({ a: user.age, b: 2 });
+        expect(sum).toEqual(22);
     });
 });
