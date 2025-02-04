@@ -31,4 +31,21 @@ describe('chain', () => {
         expect(result[1]).toBe(22);
         expect(result[2]).toBe(25);
     });
+
+    it('should be able to create a chain operation', async () => {
+        const template = chain((next) => {
+            const user = next(operations.createUser({ firstName: 'John', lastName: 'Smith' }));
+            const sum = next(operations.add({ a: user.age, b: 2 }));
+            return next(operations.add({ a: sum, b: 3 }));
+        });
+        expect(template).toBeDefined();
+
+        const data = template!.toJSON();
+        const response = await executor.execute({ data });
+        const result = response.data!;
+
+        expect(result[0].age).toBe(20);
+        expect(result[1]).toBe(22);
+        expect(result[2]).toBe(25);
+    });
 });
