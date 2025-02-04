@@ -73,7 +73,7 @@ const user = await rpc.call.createUser('John');
 const sum = await rpc.call.sum(user.age, 2);
 ```
 
-### chain
+#### chain
 
 But you can also chain operations and execute them in one call:
 
