@@ -1,8 +1,7 @@
-import { describe, it } from '@jest/globals';
-import { createTemplateEngine, OperationTemplate, templateReferencePrefix } from '../template';
-import { reference, ReferenceExtractor } from '../reference';
+import { chain } from '.';
+import { createTemplateEngine } from '../template';
 import { createExecutor } from '../executor';
-import { OperationAPI } from '../operation';
+import { describe, it } from '@jest/globals';
 
 export type TestInterface = {
     add: (input: { a: number; b: number }) => Promise<number>;
@@ -15,29 +14,12 @@ const executor = createExecutor<TestInterface>({
 });
 export const operations = createTemplateEngine<TestInterface>();
 
-const chain = <API extends OperationAPI>(
-    chainer: (next: <I, O>(template: OperationTemplate<any, I, O>) => ReferenceExtractor<O>) => void,
-): OperationTemplate<API, any, any> | undefined => {
-    const templates: OperationTemplate<any, any, any>[] = [];
-    let referenceIndex = -1;
-
-    chainer(<I, O>(template: OperationTemplate<any, I, O>) => {
-        templates.push(template);
-        return reference(`${templateReferencePrefix}${++referenceIndex}`);
-    });
-
-    return templates.reduce(
-        (acc, template) => (acc ? acc.compose((_) => template) : template),
-        undefined as OperationTemplate<API, any, any> | undefined,
-    );
-};
-
 describe('chain', () => {
     it('should be able to chain a list of composed template', async () => {
         const template = chain((next) => {
             const user = next(operations.createUser({ firstName: 'John', lastName: 'Smith' }));
             const sum = next(operations.add({ a: user.age, b: 2 }));
-            next(operations.add({ a: sum, b: 3 }));
+            return next(operations.add({ a: sum, b: 3 }));
         });
         expect(template).toBeDefined();
 
