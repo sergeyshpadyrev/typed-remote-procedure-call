@@ -1,8 +1,9 @@
 import { chain as chainFn } from '../chain';
+import { createTemplateEngine, OperationTemplate, OperationTemplateEngine } from '../template';
 import { ExecutionRequest } from '../executor';
 import { OperationAPI } from '../operation';
-import { createTemplateEngine, OperationTemplateEngine } from '../template';
 import { OperationCallerProps } from './types';
+import { ReferenceExtractor } from '../reference';
 
 export const createRPC = <API extends OperationAPI>(props: OperationCallerProps) => {
     const operations = createTemplateEngine<API>();
@@ -31,11 +32,16 @@ export const createRPC = <API extends OperationAPI>(props: OperationCallerProps)
         },
     ) as API;
 
-    const chain = <LastOutput>(props: {
-        next: Parameters<typeof chainFn<API, LastOutput>>[0];
-        operations: OperationTemplateEngine<API>;
-    }): Promise<LastOutput> => {
-        const template = chainFn<API, LastOutput>(props.next);
+    const chain = <LastOutput>(
+        chainer: (props: {
+            next: <I, O>(template: OperationTemplate<any, I, O>) => ReferenceExtractor<O>;
+            operations: OperationTemplateEngine<API>;
+        }) => ReferenceExtractor<LastOutput>,
+    ): Promise<LastOutput> => {
+        const template = chainFn<API, LastOutput>((next) => {
+            const reference = chainer({ next, operations });
+            return reference;
+        });
         return execute({ data: template.toJSON() });
     };
 

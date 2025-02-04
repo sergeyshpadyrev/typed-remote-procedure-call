@@ -28,10 +28,12 @@ describe('RPC', () => {
         expect(sum).toEqual(22);
     });
 
-    // it('should be able to call operations in chain', async () => {
-    //      rpc.chain(({next, operations}) => {
-    //         const user = next(operations.)
-    //      })
-
-    // });
+    it('should be able to call operations in chain', async () => {
+        const sum = await rpc.chain(({ next, operations }) => {
+            const user = next(operations.createUser({ firstName: 'John', lastName: 'Doe' }));
+            const sum = next(operations.add({ a: user.age, b: 2 }));
+            return sum;
+        });
+        expect(sum).toEqual(22);
+    });
 });

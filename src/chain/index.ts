@@ -7,7 +7,7 @@ export const chainOperation =
         chainer: (
             next: <I, O>(template: OperationTemplate<any, I, O>) => ReferenceExtractor<O>,
             input: FirstInput | Reference<FirstInput, any>,
-        ) => Reference<LastOutput, any>,
+        ) => ReferenceExtractor<LastOutput>,
     ) =>
     (input: FirstInput | Reference<FirstInput, any>): OperationTemplate<API, FirstInput, LastOutput> => {
         const templates: OperationTemplate<API, any, any>[] = [];
@@ -25,7 +25,7 @@ export const chainOperation =
 export const chain = <API extends OperationAPI, LastOutput>(
     chainer: (
         next: <I, O>(template: OperationTemplate<any, I, O>) => ReferenceExtractor<O>,
-    ) => Reference<LastOutput, any>,
+    ) => ReferenceExtractor<LastOutput>,
 ): OperationTemplate<API, unknown, LastOutput> => {
     const operation = chainOperation<API, unknown, LastOutput>(chainer);
     return operation(undefined);

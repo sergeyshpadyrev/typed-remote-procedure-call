@@ -54,7 +54,7 @@ export const handleRequestFromCallerSide = async (request: ExecutionRequest): Pr
 
 ### RPC
 
-Just to call operations one by one you can use a simple caller:
+RPC is a wrapper that provides a convenient way to call operations
 
 ```ts
 import { createRPC, ExecutionRequest, ExecutionResponse } from 'typed-remote-procedure-call';
@@ -62,20 +62,26 @@ import { createRPC, ExecutionRequest, ExecutionResponse } from 'typed-remote-pro
 const rpc = createRPC<Methods>({
     process: async (request: ExecutionRequest) => sendRequestToExecutionSide(request), // Here you can use any transport
 });
-const user = await rpc.createUser('John');
-const sum = await rpc.sum(1, 2);
 ```
 
-### Chain
+#### call
+
+You can just call operations one by one:
+
+```ts
+const user = await rpc.call.createUser('John');
+const sum = await rpc.call.sum(user.age, 2);
+```
+
+### chain
 
 But you can also chain operations and execute them in one call:
 
 ```ts
 import { chain } from 'typed-remote-procedure-call';
 
-const addFive = chain((next, input) => {
-    const x = next(operations.add({ a: input, b: 2 }));
-    const y = next(operations.add({ a: x, b: 3 }));
-    return y;
+const sum = await rpc.chain(({ next, operations }) => {
+    const user = next(operations.createUser({ firstName: 'John', lastName: 'Doe' }));
+    return next(operations.add({ a: user.age, b: 2 }));
 });
 ```
