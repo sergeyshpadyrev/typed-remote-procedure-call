@@ -7,7 +7,7 @@ export const templateReferencePrefix = '$$_ref$$_';
 const createTemplate = <API extends OperationAPI, Input, Output>(
     json: OperationTemplateJSON<API>,
 ): OperationTemplate<API, Input, Output> => ({
-    then: <T>(
+    compose: <T>(
         composition: (output: ReferenceExtractor<Output>) => OperationTemplate<API, Input, T>,
     ): OperationTemplate<API, Input, T> => {
         const ref = reference<Output>(`${templateReferencePrefix}${json.length - 1}`);

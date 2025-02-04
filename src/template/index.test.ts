@@ -17,7 +17,7 @@ describe('template', () => {
     it('should be created for composed operations', async () => {
         const template = operations
             .createUser({ firstName: 'John', lastName: 'Smith' })
-            .then((user) => operations.add({ a: user.age, b: 2 }));
+            .compose((user) => operations.add({ a: user.age, b: 2 }));
         const json = template.toJSON();
         expect(json).toEqual([
             { name: 'createUser', input: { firstName: 'John', lastName: 'Smith' } },

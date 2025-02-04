@@ -5,7 +5,7 @@ export type OperationTemplateJSON<API extends OperationAPI> = OperationTemplateJ
 export type OperationTemplateJSONLine<API extends OperationAPI> = { name: keyof API; input: any };
 
 export interface OperationTemplate<API extends OperationAPI, Input, Output> {
-    then: <T>(
+    compose: <T>(
         composition: (output: ReferenceExtractor<Output>) => OperationTemplate<API, Input, T>,
     ) => OperationTemplate<API, Input, T>;
     toJSON: () => OperationTemplateJSON<API>;

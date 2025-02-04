@@ -28,7 +28,7 @@ describe('Library', () => {
     it('should be able to create and execute two composed operations', async () => {
         const template = operations
             .createUser({ firstName: 'John', lastName: 'Smith' })
-            .then((user) => operations.add({ a: user.age, b: 2 }));
+            .compose((user) => operations.add({ a: user.age, b: 2 }));
         const data = template.toJSON();
         const request = { data } as ExecutionRequest;
         const response = await executor.execute(request);
