@@ -33,7 +33,7 @@ describe('chain', () => {
     });
 
     it('should be able to create a chain operation', async () => {
-        const addFive = chainOperation((next, input: number) => {
+        const addFive = chainOperation<TestInterface, number, number>((next, input) => {
             const x = next(operations.add({ a: input, b: 2 }));
             const y = next(operations.add({ a: x, b: 3 }));
             return y;

@@ -3,13 +3,13 @@ import { OperationTemplate, templateReferencePrefix } from '../template';
 import { reference, Reference, ReferenceExtractor } from '../reference';
 
 export const chainOperation =
-    <API extends OperationAPI, LastOutput, FirstInput = unknown>(
+    <API extends OperationAPI, FirstInput, LastOutput>(
         chainer: (
             next: <I, O>(template: OperationTemplate<any, I, O>) => ReferenceExtractor<O>,
-            input: FirstInput,
+            input: FirstInput | Reference<FirstInput, any>,
         ) => Reference<LastOutput, any>,
     ) =>
-    (input: FirstInput): OperationTemplate<API, FirstInput, LastOutput> => {
+    (input: FirstInput | Reference<FirstInput, any>): OperationTemplate<API, FirstInput, LastOutput> => {
         const templates: OperationTemplate<API, any, any>[] = [];
         let referenceIndex = -1;
 
@@ -27,6 +27,6 @@ export const chain = <API extends OperationAPI, LastOutput>(
         next: <I, O>(template: OperationTemplate<any, I, O>) => ReferenceExtractor<O>,
     ) => Reference<LastOutput, any>,
 ): OperationTemplate<API, unknown, LastOutput> => {
-    const operation = chainOperation<API, LastOutput, unknown>(chainer);
+    const operation = chainOperation<API, unknown, LastOutput>(chainer);
     return operation(undefined);
 };
