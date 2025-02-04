@@ -22,26 +22,60 @@ yarn add typed-remote-procedure-call
 
 ## Usage
 
-```ts
-import { createCaller, createExecutor, ExecutionRequest, ExecutionResponse } from 'typed-remote-procedure-call';
+The fundamental entity in this library is Operation:
 
+```ts
+type Operation = <Input, Output>(input: Input) => Promise<Output>;
+```
+
+First you need to create your operations API:
+
+```
 type Methods = {
     add: (input: { a: number; b: number }) => Promise<number>;
     createUser: (input: { name: string }) => Promise<{ id: string; name: string }>;
 };
+```
 
-// Execution side (e.g. server)
+### Executor
+
+Executor is an engine that executes operations:
+
+```ts
+import { createExecutor, ExecutionRequest, ExecutionResponse } from 'typed-remote-procedure-call';
+
 const executor = createExecutor<Methods>({
     add: async (input: { a: number; b: number }) => input.a + input.b,
     createUser: async (input: { name: string }) => ({ id: '1', name: input.name }),
 });
-const handleRequestFromCallerSide = async (request: ExecutionRequest): Promise<ExecutionResponse> =>
+export const handleRequestFromCallerSide = async (request: ExecutionRequest): Promise<ExecutionResponse> =>
     executor.execute(request);
+```
 
-// Caller side (e.x. client)
+### Caller
+
+Just to call operations one by one you can use a simple caller:
+
+```ts
+import { createCaller, ExecutionRequest, ExecutionResponse } from 'typed-remote-procedure-call';
+
 const caller = createCaller<Methods>({
     handle: async (request: ExecutionRequest) => sendRequestToExecutionSide(request), // Here you can use any transport
 });
 const user = await caller.createUser('John');
 const sum = await sender.sum(1, 2);
+```
+
+### Chain
+
+But you can also chain operations and execute them in one call:
+
+```ts
+import { chain } from 'typed-remote-procedure-call';
+
+const addFive = chain((next, input) => {
+    const x = next(operations.add({ a: input, b: 2 }));
+    const y = next(operations.add({ a: x, b: 3 }));
+    return y;
+});
 ```
