@@ -57,7 +57,7 @@ export const handleRequestFromCallerSide = async (request: ExecutionRequest): Pr
 RPC is a wrapper that provides a convenient way to call operations
 
 ```ts
-import { createRPC, ExecutionRequest, ExecutionResponse } from 'typed-remote-procedure-call';
+import { createRPC, ExecutionRequest } from 'typed-remote-procedure-call';
 
 const rpc = createRPC<Methods>({
     process: async (request: ExecutionRequest) => sendRequestToExecutionSide(request), // Here you can use any transport
