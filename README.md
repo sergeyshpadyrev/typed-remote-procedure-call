@@ -23,13 +23,13 @@ yarn add typed-remote-procedure-call
 
 ## Usage
 
-The fundamental entity in this library is Operation:
+The fundamental entity in this library is Operation
 
 ```ts
 type Operation = <Input, Output>(input: Input) => Promise<Output>;
 ```
 
-First you need to create your operations API:
+First you need to declare your operations API
 
 ```ts
 type Methods = {
@@ -40,7 +40,7 @@ type Methods = {
 
 ### Executor
 
-Executor is an engine that executes operations:
+Executor is an engine that executes operations
 
 ```ts
 import { createExecutor, ExecutionRequest, ExecutionResponse } from 'typed-remote-procedure-call';
@@ -67,7 +67,7 @@ const rpc = createRPC<Methods>({
 
 #### call
 
-You can just call operations one by one:
+You can just call operations one by one
 
 ```ts
 const user = await rpc.call.createUser('John');
@@ -76,7 +76,7 @@ const sum = await rpc.call.sum(user.age, 2);
 
 #### chain
 
-But you can also chain operations and execute them in one call:
+But you can also chain operations and execute them all in once
 
 ```ts
 import { chain } from 'typed-remote-procedure-call';
