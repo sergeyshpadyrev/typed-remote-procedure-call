@@ -5,7 +5,7 @@ import { reference, Reference, ReferenceExtractor } from '../reference';
 export const chainOperation =
     <API extends OperationAPI, LastOutput, FirstInput = unknown>(
         chainer: (
-            next: <I, O>(template: OperationTemplate<API, I, O>) => ReferenceExtractor<O>,
+            next: <I, O>(template: OperationTemplate<any, I, O>) => ReferenceExtractor<O>,
             input: FirstInput,
         ) => Reference<LastOutput, any>,
     ) =>
