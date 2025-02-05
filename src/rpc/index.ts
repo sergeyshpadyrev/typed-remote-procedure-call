@@ -1,8 +1,8 @@
 import { chain as chainFn } from '../chain';
-import { createTemplateEngine, OperationTemplate, OperationTemplateEngine } from '../template';
+import { createTemplateEngine, OperationTemplate, OperationTemplateEngine, OperationTemplateInput } from '../template';
 import { ExecutionRequest } from '../executor';
 import { OperationAPI } from '../operation';
-import { OperationCallerProps } from './types';
+import { OperationCallerProps, OperationChainEngine } from './types';
 import { ReferenceExtractor } from '../reference';
 
 export const createRPC = <API extends OperationAPI>(props: OperationCallerProps) => {
@@ -32,16 +32,27 @@ export const createRPC = <API extends OperationAPI>(props: OperationCallerProps)
         },
     ) as API;
 
+    const chainOperationEngine = (
+        next: <I, O>(template: OperationTemplate<API, I, O>) => ReferenceExtractor<O>,
+    ): OperationChainEngine<API> =>
+        new Proxy(
+            {},
+            {
+                get: (_target, prop) => {
+                    if (typeof prop === 'string') {
+                        return (input: any) => {
+                            const template = operations[prop](input);
+                            return next(template);
+                        };
+                    }
+                },
+            },
+        ) as OperationChainEngine<API>;
+
     const chain = <LastOutput>(
-        chainer: (props: {
-            next: <I, O>(template: OperationTemplate<any, I, O>) => ReferenceExtractor<O>;
-            operations: OperationTemplateEngine<API>;
-        }) => ReferenceExtractor<LastOutput>,
+        chainer: (call: OperationChainEngine<API>) => ReferenceExtractor<LastOutput>,
     ): Promise<LastOutput> => {
-        const template = chainFn<API, LastOutput>((next) => {
-            const reference = chainer({ next, operations });
-            return reference;
-        });
+        const template = chainFn<API, LastOutput>((next) => chainer(chainOperationEngine(next)));
         return execute({ data: template.toJSON() });
     };
 

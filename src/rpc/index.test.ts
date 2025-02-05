@@ -29,10 +29,9 @@ describe('RPC', () => {
     });
 
     it('should be able to call operations in chain', async () => {
-        const sum = await rpc.chain(({ next, operations }) => {
-            const user = next(operations.createUser({ firstName: 'John', lastName: 'Doe' }));
-            const sum = next(operations.add({ a: user.age, b: 2 }));
-            return sum;
+        const sum = await rpc.chain((call) => {
+            const user = call.createUser({ firstName: 'John', lastName: 'Doe' });
+            return call.add({ a: user.age, b: 2 });
         });
         expect(sum).toEqual(22);
     });

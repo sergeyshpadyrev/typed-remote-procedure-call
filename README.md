@@ -83,8 +83,8 @@ But you can also chain operations and execute them all in once
 ```ts
 import { chain } from 'typed-remote-procedure-call';
 
-const sum = await rpc.chain(({ next, operations }) => {
-    const user = next(operations.createUser({ name: 'John' }));
-    return next(operations.add({ a: user.age, b: 2 }));
+const sum = await rpc.chain((call) => {
+    const user = call.createUser({ name: 'John' });
+    return call.add({ a: user.age, b: 2 });
 });
 ```
