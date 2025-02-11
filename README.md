@@ -6,14 +6,15 @@
 # typed-remote-procedure-call
 
 This library provides a convenient way to create transport-agnostic typed RPC <br/>
+It consists of two parts - caller and executor. <br/>
 
-It can be used for:
+Possible use cases:
 
--   Client-server communication
--   Iframe-host communication
--   Host-iframe communication
--   Websocket communication
--   Any other channel
+-   Frontend (caller) - HTTP - Backend (executor)
+-   Frontend (caller) - Websocket - Backend (executor)
+-   Backend (caller) - Websocket - Frontend (executor)
+-   Host web app (caller) - Message bus - Iframe (executor)
+-   Iframe (caller) - Message bus - Host web app (executor)
 
 ## Installation
 
@@ -88,3 +89,7 @@ const sum = await rpc.chain((call) => {
     return call.add({ a: user.age, b: 2 });
 });
 ```
+
+Here what's returned from `call.operation(input)` is not a promise but a reference to the operation result. <br/>
+You can use it to pass it to another operation. <br/>
+The returned reference is the final result of the chain of operations.
