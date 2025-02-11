@@ -78,7 +78,7 @@ const sum = await rpc.call.sum({ a: user.age, b: 2 });
 
 #### chain
 
-But you can also chain operations and execute them all in once
+But you can also chain operations and execute them all in one batch
 
 ```ts
 import { chain } from 'typed-remote-procedure-call';
