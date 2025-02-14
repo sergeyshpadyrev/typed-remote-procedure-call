@@ -10,7 +10,7 @@ export const createRPC = <API extends OperationAPI>(props: OperationCallerProps)
 
     const execute = async (request: ExecutionRequest) => {
         try {
-            const response = await props.process(request);
+            const response = await props.send(request);
             if (response.error) throw new Error(response.error);
             return response.data![response.data!.length - 1];
         } catch (error) {
