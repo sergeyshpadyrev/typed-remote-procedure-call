@@ -4,7 +4,7 @@ import { ReferenceExtractor } from '../reference';
 import { OperationTemplateInput } from '../template';
 
 export interface OperationCallerProps {
-    process: (request: ExecutionRequest) => Promise<ExecutionResponse>;
+    send: (request: ExecutionRequest) => Promise<ExecutionResponse>;
 }
 
 export type OperationChainEngine<API extends OperationAPI> = {

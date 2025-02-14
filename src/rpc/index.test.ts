@@ -16,7 +16,7 @@ export const executor = createExecutor<TestInterface>({
 });
 
 const rpc = createRPC<TestInterface>({
-    process: async (request: ExecutionRequest) => executor.execute(request),
+    send: async (request: ExecutionRequest) => executor.execute(request),
 });
 
 describe('RPC', () => {
