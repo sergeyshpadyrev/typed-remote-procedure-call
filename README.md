@@ -82,8 +82,6 @@ const sum = await rpc.call.sum({ a: user.age, b: 2 });
 But you can also chain operations and execute them all in one batch
 
 ```ts
-import { chain } from 'typed-remote-procedure-call';
-
 const sum = await rpc.chain((call) => {
     const user = call.createUser({ name: 'John' });
     return call.add({ a: user.age, b: 2 });
